@@ -2,30 +2,19 @@ import time
 import random
 
 
-# Global variables
-print('\nWelcome to rock, paper scissors.')
-time.sleep(0.5)
-name = input('\nWhat is your name? ')
-time.sleep(0.5)
-print(f'Hi, {name}.\n')
-
-moves = ['Rock', 'Paper', 'Scissors']
-stats = {'Wins': 0, 'Losses': 0}
-
-
-# "Rock, Paper, Scissors" countdown
-def countdown():
+def countdown(moves):
+    """"Rock, Paper, Scissors, Shoot!" countdown"""
     for i in moves:
         print(i)
         time.sleep(0.5)
     print('Shoot!')
 
 
-def choices():
+def choices(moves):
     user_move = int(input('\nRock (0), paper (1) or scissors (2)? '))
     if user_move not in [0, 1, 2]:
         input('\nPlease choose 0, 1 or 2. Press enter to try again.')
-        choices()
+        choices(moves)
     user_move = moves[user_move]
     time.sleep(0.5)
     print(f'\nYou chose {user_move}.')
@@ -38,8 +27,8 @@ def choices():
     return results
 
 
-# Determines the winner based on the chosen moves
 def did_player_win(user_move, cpu_move):
+    """Determines the winner based on the chosen moves"""
     if user_move == 'Rock' and cpu_move == 'Scissors':
         return True
     elif user_move == 'Rock' and cpu_move == 'Paper':
@@ -54,49 +43,61 @@ def did_player_win(user_move, cpu_move):
         return False
 
 
-# Print user wins/losses
-def print_stats():
+def print_stats(stats):
+    """Print user wins/losses"""
+    time.sleep(1)
+    print()
     for k, v in stats.items():
         print(f'{k}: {v}')
 
 
-play = True
+def main():
+    """Main game loop"""
+    print('\nWelcome to rock, paper scissors.')
+    time.sleep(0.5)
+    name = input('\nWhat is your name? ')
+    time.sleep(0.5)
+    print(f'Hi, {name}.\n')
 
-while play:
-    input('Press enter to play! ')
-    print()
-    countdown()
+    moves = ['Rock', 'Paper', 'Scissors']
+    stats = {'Wins': 0, 'Losses': 0, 'Draws': 0}
 
-    results = choices()
+    play = True
+    while play:
+        # Countdown and apply selections
+        input('Press enter to play! \n')
+        countdown(moves)
+        results = choices(moves)
 
-    is_draw = True
-
-    while is_draw:
-
+        # Check for draw, add to and print stats and ask for rematch
         if results[0] == results[1]:
             time.sleep(1)
-            input('\nDraw! Press enter to countdown again. ')
-            print()
-            countdown()
-            results = choices()
+            print('\nIt\'s a draw!')
+            stats['Draws'] += 1
+
+            print_stats(stats)
+            play = int(input('\nPlay again? Yes (1), No (0) \n'))
+            if play:
+                continue
+            else:
+                break
+
+        # Check if player won, add to and print stats, ask for rematch
+        player_won = did_player_win(results[0], results[1])
+        if player_won:
+            time.sleep(1)
+            print('You won!')
+            stats['Wins'] += 1
         else:
-            is_draw = False
+            time.sleep(1)
+            print('You lost :(')
+            stats['Losses'] += 1
 
-    player_won = did_player_win(results[0], results[1])
-    if player_won:
-        time.sleep(1)
-        print('You won!')
-        stats['Wins'] += 1
-    else:
-        time.sleep(1)
-        print('You lost :(')
-        stats['Losses'] += 1
+        print_stats(stats)
+        play = int(input('\nPlay again? Yes (1), No (0) \n'))
 
-    time.sleep(1)
-    print()
-    print_stats()
+    print('Bye, thanks for playing!')
 
-    play = int(input('\nPlay again? Yes (1), No (0) '))
-    print()
 
-print('Thanks for playing!')
+if __name__ == "__main__":
+    main()
